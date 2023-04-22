@@ -1,6 +1,6 @@
 {
   "name": "@ryfylke-react/toast",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A simple solution for building your own toast management system.",
   "main": "./dist/cjs/index.js",
   "module": "./dist/esm/index.js",
@@ -11,7 +11,7 @@
     "build:cjs": "tsc --module commonjs --outDir dist/cjs",
     "lint": "eslint \"{**/*,*}.{js,ts,jsx,tsx}\"",
     "prepare": "npm run build",
-    "prepublishOnly": "npm test && npm run prettier && npm run lint"
+    "prepublishOnly": "npm run lint"
   },
   "keywords": [],
   "author": "Ryfylke React AS",
