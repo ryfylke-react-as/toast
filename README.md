@@ -1,8 +1,14 @@
 # @ryfylke-react/toast
 
+A simple solution for building your own toast management system.
+
+- [x] Allows you to specify any interface for the toasts.
+- [x] Lets you write the component for rendering the toasts yourself.
+
 ## Quick guide
 
 ```tsx
+// toast.ts
 import { initToast } from "@ryfylke-react/toast";
 
 export type Toast = {
@@ -10,6 +16,11 @@ export type Toast = {
 };
 
 export const { toast, ToastProvider } = initToast<Toast>();
+```
+
+```tsx
+// App.tsx
+import { ToastProvider } from "./toast";
 
 const App = () => {
   return (
@@ -25,15 +36,17 @@ const App = () => {
           );
         }}
       />
+      <Elsewhere />
     </>
   );
 };
 ```
 
 ```tsx
-import { toast } from "../App";
+// Elsewhere.tsx
+import { toast } from "./toast";
 
-const Elsewhere = () => {
+export const Elsewhere = () => {
   return (
     <button
       onClick={() => {
