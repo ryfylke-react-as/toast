@@ -58,3 +58,16 @@ export const Elsewhere = () => {
   );
 };
 ```
+
+## Arguments
+
+### `ToastProvider`
+
+- `renderToasts` - Takes a function that returns a ReactElement. Has the following props:
+  - `toasts` - The list of toasts
+  - `onRemoveToast` - A function that takes one argument, `toastId: string`.
+- `removeToastsAfterMs` - An optional argument that lets you configure a timeout for automatically removing the toast from the list.
+
+### `toast`
+
+Takes whatever interface you specified as a generic when initializing.
