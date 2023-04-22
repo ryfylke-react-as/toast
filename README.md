@@ -1,9 +1,10 @@
 # @ryfylke-react/toast
 
-A simple solution for building your own toast management system.
+A simple headless toast solution for your React project.
 
 - [x] Allows you to specify any interface for the toasts.
 - [x] Lets you write the component for rendering the toasts yourself.
+- [x] Optional configurable delayed removing of toasts
 
 ## Quick guide
 
