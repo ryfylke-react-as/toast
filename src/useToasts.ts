@@ -16,7 +16,9 @@ export function useToasts<T>(opts: UseToastsOpts<T> = {}) {
   useEffect(() => {
     mounted.current = true;
     const listener = (ev: Event) => {
-      const event = ev as Event & { detail?: T };
+      const event = ev as Event & {
+        detail?: T & { removeAfterMs?: number };
+      };
       if (event.detail) {
         const toastId = genId();
         setToasts((prev) => {
@@ -28,7 +30,15 @@ export function useToasts<T>(opts: UseToastsOpts<T> = {}) {
             return prev;
           }
         });
-        if (opts.removeToastsAfterMs) {
+        if (event.detail.removeAfterMs) {
+          setTimeout(() => {
+            if (mounted.current) {
+              setToasts((prev) =>
+                prev.filter((item) => item.id !== toastId)
+              );
+            }
+          }, event.detail.removeAfterMs);
+        } else if (opts.removeToastsAfterMs) {
           setTimeout(() => {
             if (mounted.current) {
               setToasts((prev) =>

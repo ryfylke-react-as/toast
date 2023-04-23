@@ -18,7 +18,8 @@ export type Toast = {
   title: string;
 };
 
-export const { toast, ToastProvider } = initToast<Toast>();
+export const { toast, ToastProvider, useToasts } =
+  initToast<Toast>();
 ```
 
 ```tsx
@@ -75,7 +76,7 @@ export const Elsewhere = () => {
 ### `initToast<T>`
 
 **Arguments**:
-Takes one [Typescript generic](https://www.typescriptlang.org/docs/handbook/2/generics.html) to specify the desired toast interface.
+Takes one [Typescript generic](https://www.typescriptlang.org/docs/handbook/2/generics.html) to specify the desired toast interface. The generic should extend `Record<string, any>`.
 
 **Returns**:
 
@@ -83,7 +84,9 @@ The following (`toast`, `useToasts` & `ToastProvider`):
 
 ### `toast`
 
-Takes whatever interface you specified as a generic when initializing with `initToast`.
+Takes whatever interface you specified as a generic when initializing with `initToast`, as well as an optional argument:
+
+- `removeAfterMs` - (optional) Lets you specify a delay for this specific toast to be removed after.
 
 ### `useToasts`
 

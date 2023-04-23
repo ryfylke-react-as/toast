@@ -9,7 +9,7 @@ export const ToastEventType = "ryfrea-toast" as const;
 
 export const initToast = <T extends Record<string, any>>() => {
   return {
-    toast: (args: T) => {
+    toast: (args: T & { removeAfterMs?: number }) => {
       document.dispatchEvent(
         new CustomEvent(ToastEventType, { detail: args })
       );
