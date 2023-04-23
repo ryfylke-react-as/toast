@@ -11,6 +11,7 @@ A simple headless toast solution for your React project.
 ```shell
 yarn add @ryfylke-react/toast
 ```
+## [Documentation](https://toast.ryfylke.dev)
 
 ## Quick guide
 
