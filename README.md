@@ -35,34 +35,39 @@ export const { toast, ToastProvider } = initToast<Toast>();
 
 ```tsx
 // App.tsx
-import { ToastProvider } from "./toast";
+import { ToastProvider, Toast } from "./toast";
 
 const App = () => {
   return (
-    <>
+    <div className="App">
       <ToastProvider
         portal={document.body}
         removeToastsAfterMs={3000}
-        renderToasts={(props) => {
-          return (
-            <div className="toasts-container">
-              {props.toasts.map((toast) => (
-                <button
-                  key={toast.id}
-                  className="toast"
-                  onClick={() => props.onRemoveToast(toast.id)}
-                >
-                  {toast.title}
-                </button>
-              ))}
-            </div>
-          );
-        }}
+        renderToasts={RenderToasts}
       />
       <Elsewhere />
-    </>
+    </div>
   );
 };
+
+const RenderToasts = (props: {
+  toasts: (Toast & { id: string })[];
+  onRemoveToast: (toastId: string) => void;
+}) => {
+  return (
+    <div className="toasts-container">
+      {props.toasts.map((toast) => (
+        <button
+          key={toast.id}
+          className="toast"
+          onClick={() => props.onRemoveToast(toast.id)}
+        >
+          {toast.title}
+        </button>
+      ))}
+    </div>
+  );
+}
 ```
 
 ```tsx
@@ -83,6 +88,40 @@ export const Elsewhere = () => {
 ```
 
 ## Reference
+
+**TLDR:**
+
+```typescript
+// import { initToast } from "@ryfylke-react/toast";
+type InitToast = <T>() => {
+   toast: Toast<T>;
+   useToasts: UseToasts<T>;
+   ToastProvider: ToastProvider<T>;
+   subscribeToToasts: SubscribeToToasts<T>;
+}
+
+type Toast<T> = (args: T) => void;
+
+type UseToasts<T> = (args?: {
+   onToastAdded?: (toast: T & { id: string }) => void;
+   removeToastsAfterMs?: number;
+}) => {
+   toasts: (T & { id: string })[];
+   onRemoveToast: (toastId: string) => void;
+}
+
+type ToastProvider<T> = (props: {
+  renderToasts: (props: {
+    toasts: (T & { id: string })[];
+    onRemoveToast: (id: string) => void;
+  }) => ReactElement;
+  removeToastsAfterMs?: number;
+  onToastAdded?: (toast: T) => void;
+  portal?: undefined | HTMLElement;
+}) => (ReactPortal | ReactElement);
+
+type SubscribeToToasts<T> = (callback: (toast: T & { id: string }) => void) => (() => void);
+```
 
 ### `initToast<T>`
 
