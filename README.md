@@ -14,7 +14,13 @@ yarn add @ryfylke-react/toast
 
 ## Quick guide
 
-You can render the toasts using either `useToasts` or `ToastProvider`, returned from `initToast`. `ToastProvider` uses `useToasts` internally, and is just a convenient wrapper.
+You can render the toasts using either
+
+- `useToasts` (React hook)
+- `ToastProvider` (HOC / convenient wrapper for hook)
+- `subscribeToToasts` (Event listener for use outside of React)
+
+These are returned from `initToast`. We recommend using either `useToasts` or `ToastProvider` when using this library with React.
 
 ```tsx
 // toast.ts
@@ -24,8 +30,7 @@ export type Toast = {
   title: string;
 };
 
-export const { toast, ToastProvider, useToasts } =
-  initToast<Toast>();
+export const { toast, ToastProvider } = initToast<Toast>();
 ```
 
 ```tsx
@@ -86,7 +91,7 @@ Takes one [Typescript generic](https://www.typescriptlang.org/docs/handbook/2/ge
 
 **Returns**:
 
-The following (`toast`, `useToasts` & `ToastProvider`):
+The following (`toast`, `useToasts`, `ToastProvider` & `subscribeToToasts`):
 
 ### `toast`
 
@@ -121,3 +126,7 @@ Same arguments as `useToasts`, but laid out in a different manner:
 **Returns**: Whatever `renderToasts` returns.
 
 **Notes**: `ToastProvider` is not strictly nessecary if you are using `useToasts`. This component is just a helper/HOC for utilizing the hook.
+
+### `subscribeToToasts`
+
+Lets you subscribe to toasts outside of React. Takes one argument, `callback` which is a callback function that gets called whenever a new toast is added. Returns a unsubscribe function, that stops listening for events.
