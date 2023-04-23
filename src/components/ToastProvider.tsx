@@ -2,6 +2,11 @@ import React, { ReactElement } from "react";
 import ReactDOM from "react-dom";
 import { useToasts } from "../useToasts";
 
+export type RenderToastsProps<T> = {
+  toasts: (T & { id: string })[];
+  onRemoveToast: (id: string) => void;
+};
+
 export type ToastProviderProps<T> = {
   renderToasts: (props: {
     toasts: (T & { id: string })[];
