@@ -1,4 +1,7 @@
-# @ryfylke-react/toast
+# Ryfylke React Toast
+
+![ryfrea-toast](https://user-images.githubusercontent.com/1190770/233868385-11ad9ff6-eb21-4a09-80e2-28d9de875a68.png)
+
 
 A simple headless toast solution for your React project.
 
