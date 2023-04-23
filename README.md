@@ -2,8 +2,8 @@
 
 A simple headless toast solution for your React project.
 
-- [x] Allows you to specify any interface for the toasts.
-- [x] Lets you write the component for rendering the toasts yourself.
+- [x] Initialize with any interface you want.
+- [x] Write your own components for rendering the toasts.
 - [x] Optional configurable delayed removing of toasts
 
 ## Installation
@@ -14,13 +14,11 @@ yarn add @ryfylke-react/toast
 
 ## Quick guide
 
-You can render the toasts using either
+> You can also take a look at the [live demo](https://codesandbox.io/s/happy-orla-1hi1k0?file=/src/components/ToastProvider.tsx), if you prefer.
 
-- `useToasts` (React hook)
-- `ToastProvider` (Component / convenient wrapper for hook)
-- `subscribeToToasts` (Event listener for use outside of React)
-
-These are returned from `initToast`. We recommend using either `useToasts` or `ToastProvider` when using this library with React.
+1. Initialize using `initToast`
+2. Create your toast-list, using `ToastProvider` or `useToasts`, returned from `initToast`
+3. Fire off a toast, using `toast` returned from `initToast`.
 
 ```tsx
 // toast.ts
@@ -35,34 +33,39 @@ export const { toast, ToastProvider } = initToast<Toast>();
 
 ```tsx
 // App.tsx
-import { ToastProvider } from "./toast";
+import { ToastProvider, Toast } from "./toast";
 
 const App = () => {
   return (
-    <>
+    <div className="App">
       <ToastProvider
         portal={document.body}
         removeToastsAfterMs={3000}
-        renderToasts={(props) => {
-          return (
-            <div className="toasts-container">
-              {props.toasts.map((toast) => (
-                <button
-                  key={toast.id}
-                  className="toast"
-                  onClick={() => props.onRemoveToast(toast.id)}
-                >
-                  {toast.title}
-                </button>
-              ))}
-            </div>
-          );
-        }}
+        renderToasts={RenderToasts}
       />
       <Elsewhere />
-    </>
+    </div>
   );
 };
+
+const RenderToasts = (props: {
+  toasts: (Toast & { id: string })[];
+  onRemoveToast: (toastId: string) => void;
+}) => {
+  return (
+    <div className="toasts-container">
+      {props.toasts.map((toast) => (
+        <button
+          key={toast.id}
+          className="toast"
+          onClick={() => props.onRemoveToast(toast.id)}
+        >
+          {toast.title}
+        </button>
+      ))}
+    </div>
+  );
+}
 ```
 
 ```tsx
@@ -83,6 +86,42 @@ export const Elsewhere = () => {
 ```
 
 ## Reference
+
+`@ryfylke-react/toast` is fully typescript supported. 
+
+**TLDR:**
+
+```typescript
+// import { initToast } from "@ryfylke-react/toast";
+type InitToast = <T>() => {
+   toast: Toast<T>;
+   useToasts: UseToasts<T>;
+   ToastProvider: ToastProvider<T>;
+   subscribeToToasts: SubscribeToToasts<T>;
+}
+
+type Toast<T> = (args: T) => void;
+
+type UseToasts<T> = (args?: {
+   onToastAdded?: (toast: T & { id: string }) => void;
+   removeToastsAfterMs?: number;
+}) => {
+   toasts: (T & { id: string })[];
+   onRemoveToast: (toastId: string) => void;
+}
+
+type ToastProvider<T> = (props: {
+  renderToasts: (props: {
+    toasts: (T & { id: string })[];
+    onRemoveToast: (id: string) => void;
+  }) => ReactElement;
+  removeToastsAfterMs?: number;
+  onToastAdded?: (toast: T) => void;
+  portal?: undefined | HTMLElement;
+}) => (ReactPortal | ReactElement);
+
+type SubscribeToToasts<T> = (callback: (toast: T & { id: string }) => void) => (() => void);
+```
 
 ### `initToast<T>`
 
