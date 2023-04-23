@@ -2,8 +2,8 @@
 
 A simple headless toast solution for your React project.
 
-- [x] Allows you to specify any interface for the toasts.
-- [x] Lets you write the component for rendering the toasts yourself.
+- [x] Initialize with any interface you want.
+- [x] Write your own components for rendering the toasts.
 - [x] Optional configurable delayed removing of toasts
 
 ## Installation
