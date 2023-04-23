@@ -17,7 +17,7 @@ yarn add @ryfylke-react/toast
 You can render the toasts using either
 
 - `useToasts` (React hook)
-- `ToastProvider` (HOC / convenient wrapper for hook)
+- `ToastProvider` (Component / convenient wrapper for hook)
 - `subscribeToToasts` (Event listener for use outside of React)
 
 These are returned from `initToast`. We recommend using either `useToasts` or `ToastProvider` when using this library with React.
