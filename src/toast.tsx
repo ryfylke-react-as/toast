@@ -3,6 +3,7 @@ import {
   ToastProvider,
   ToastProviderProps,
 } from "./components/ToastProvider";
+import { UseToastsOpts, useToasts } from "./useToasts";
 
 export const ToastEventType = "ryfrea-toast" as const;
 
@@ -16,5 +17,6 @@ export const initToast = <T extends Record<string, any>>() => {
     ToastProvider: (props: ToastProviderProps<T>) => (
       <ToastProvider {...props} />
     ),
+    useToasts: (opts: UseToastsOpts<T>) => useToasts<T>(opts),
   };
 };
