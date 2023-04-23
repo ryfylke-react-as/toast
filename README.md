@@ -14,13 +14,9 @@ yarn add @ryfylke-react/toast
 
 ## Quick guide
 
-You can render the toasts using either
-
-- `useToasts` (React hook)
-- `ToastProvider` (Component / convenient wrapper for hook)
-- `subscribeToToasts` (Event listener for use outside of React)
-
-These are returned from `initToast`. We recommend using either `useToasts` or `ToastProvider` when using this library with React.
+1. Initialize using `initToast`
+2. Create your toast-list, using `ToastProvider` or `useToasts`, returned from `initToast`
+3. Fire off a toast, using `toast` returned from `initToast`.
 
 ```tsx
 // toast.ts
@@ -88,6 +84,8 @@ export const Elsewhere = () => {
 ```
 
 ## Reference
+
+`@ryfylke-react/toast` is fully typescript supported. 
 
 **TLDR:**
 
