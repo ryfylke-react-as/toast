@@ -14,6 +14,8 @@ yarn add @ryfylke-react/toast
 
 ## Quick guide
 
+> You can also take a look at the [live demo](https://codesandbox.io/s/happy-orla-1hi1k0?file=/src/components/ToastProvider.tsx), if you prefer.
+
 1. Initialize using `initToast`
 2. Create your toast-list, using `ToastProvider` or `useToasts`, returned from `initToast`
 3. Fire off a toast, using `toast` returned from `initToast`.
