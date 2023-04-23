@@ -31,7 +31,12 @@ const App = () => {
           return (
             <div>
               {props.toasts.map((toast) => (
-                <div key={toast.id}>{toast.title}</div>
+                <button
+                  key={toast.id}
+                  onClick={() => props.onRemoveToast(toast.id)}
+                >
+                  {toast.title}
+                </button>
               ))}
             </div>
           );
