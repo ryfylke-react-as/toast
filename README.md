@@ -6,6 +6,12 @@ A simple headless toast solution for your React project.
 - [x] Lets you write the component for rendering the toasts yourself.
 - [x] Optional configurable delayed removing of toasts
 
+## Installation
+
+```shell
+yarn add @ryfylke-react/toast
+```
+
 ## Quick guide
 
 You can render the toasts using either `useToasts` or `ToastProvider`, returned from `initToast`. `ToastProvider` uses `useToasts` internally, and is just a convenient wrapper.
