@@ -204,3 +204,61 @@ describe("useToasts", () => {
     );
   });
 });
+
+describe("initToast", () => {
+  it("is possible to have separate toast channels", async () => {
+    const user = userEvent.setup();
+    const toastOneUtils = initToast<{
+      title: string;
+    }>();
+    const toastTwoUtils = initToast<{
+      title: string;
+    }>();
+    const Toasts = () => {
+      const { toasts } = toastOneUtils.useToasts();
+      return (
+        <ul>
+          {toasts.map((toast) => (
+            <li key={toast.id}>{toast.title} </li>
+          ))}
+        </ul>
+      );
+    };
+    const App = () => {
+      return (
+        <>
+          <Toasts />
+          <button
+            onClick={() =>
+              toastOneUtils.toast({ title: "Toast 1" })
+            }
+          >
+            Should work
+          </button>
+          <button
+            onClick={() =>
+              toastTwoUtils.toast({ title: "Toast 2" })
+            }
+          >
+            Should not work
+          </button>
+        </>
+      );
+    };
+    render(<App />);
+    expect(screen.queryByRole("listitem")).toBeNull();
+    user.click(
+      screen.getByRole("button", { name: "Should not work" })
+    );
+    await waitFor(() => new Promise((r) => setTimeout(r, 100)));
+    await waitFor(() =>
+      expect(screen.queryByText("Toast 2")).toBeNull()
+    );
+    user.click(
+      screen.getByRole("button", { name: "Should work" })
+    );
+    await waitFor(() =>
+      expect(screen.getByText("Toast 1")).toBeVisible()
+    );
+  });
+});
