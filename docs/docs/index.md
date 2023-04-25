@@ -5,7 +5,7 @@ sidebar_position: 1
 
 # Ryfylke React Toast
 
-> A headless toast solution for your React project
+> A lightweight & headless toast solution for your React projects
 
 ## Install
 
