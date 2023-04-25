@@ -17,12 +17,18 @@ export type ToastProviderProps<T> = {
   portal?: undefined | HTMLElement;
 };
 
+export type ToastProviderPropsInternal<T> =
+  ToastProviderProps<T> & {
+    channel: string;
+  };
+
 export function ToastProvider<T extends Record<string, any>>(
-  props: ToastProviderProps<T>
+  props: ToastProviderPropsInternal<T>
 ) {
   const { toasts, onRemoveToast } = useToasts({
     removeToastsAfterMs: props.removeToastsAfterMs,
     onToastAdded: props.onToastAdded,
+    channel: props.channel,
   });
 
   if (props.portal) {

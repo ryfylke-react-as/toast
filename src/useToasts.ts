@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { subscribeToToasts } from "./toast";
+import { ToastEventType, subscribeToToasts } from "./toast";
 import { genId } from "./utils";
 
 export type UseToastsOpts<T> = {
@@ -7,9 +7,13 @@ export type UseToastsOpts<T> = {
   removeToastsAfterMs?: number;
 };
 
+export type UseToastsOptsInternal<T> = UseToastsOpts<T> & {
+  channel: string;
+};
+
 /** Listens to all toasts and stores them in a list */
 export function useToasts<T extends Record<string, any>>(
-  opts: UseToastsOpts<T> = {}
+  opts: UseToastsOptsInternal<T> = { channel: ToastEventType }
 ) {
   const mounted = useRef(true);
   const [toasts, setToasts] = useState<(T & { id: string })[]>(
@@ -45,7 +49,7 @@ export function useToasts<T extends Record<string, any>>(
           }
         }, opts.removeToastsAfterMs);
       }
-    });
+    }, opts.channel);
 
     return () => {
       unsubscribe();

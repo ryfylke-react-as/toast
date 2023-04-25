@@ -4,13 +4,15 @@ import {
   ToastProviderProps,
 } from "./components/ToastProvider";
 import { UseToastsOpts, useToasts } from "./useToasts";
+import { genId } from "./utils";
 
 export const ToastEventType = "ryfrea-toast" as const;
 
 type UnsubscribeFunction = () => void;
 
 export const subscribeToToasts = <T extends Record<string, any>>(
-  onToastAdded: (toast: T & { removeAfterMs?: number }) => void
+  onToastAdded: (toast: T & { removeAfterMs?: number }) => void,
+  channel: string
 ): UnsubscribeFunction => {
   const listener = (e: Event) => {
     const event = e as Event & {
@@ -20,28 +22,31 @@ export const subscribeToToasts = <T extends Record<string, any>>(
       onToastAdded(event.detail);
     }
   };
-  document.addEventListener(ToastEventType, listener);
+  document.addEventListener(channel, listener);
   return () => {
-    document.removeEventListener(ToastEventType, listener);
+    document.removeEventListener(channel, listener);
   };
 };
 
 export const initToast = <T extends Record<string, any>>() => {
+  const id = genId();
+  const channel = `${ToastEventType}-${id}`;
+
   return {
     toast: (args: T & { removeAfterMs?: number }) => {
       document.dispatchEvent(
-        new CustomEvent(ToastEventType, { detail: args })
+        new CustomEvent(channel, { detail: args })
       );
     },
     ToastProvider: (props: ToastProviderProps<T>) => (
-      <ToastProvider {...props} />
+      <ToastProvider {...props} channel={channel} />
     ),
     useToasts: (opts: UseToastsOpts<T> = {}) =>
-      useToasts<T>(opts),
+      useToasts<T>({ ...opts, channel }),
     subscribeToToasts: (
       onToastAdded: (
         toast: T & { removeAfterMs?: number }
       ) => void
-    ) => subscribeToToasts(onToastAdded),
+    ) => subscribeToToasts(onToastAdded, channel),
   };
 };
