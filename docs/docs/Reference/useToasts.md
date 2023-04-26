@@ -6,6 +6,8 @@ sidebar_position: 3
 
 > Returned from `initToast`
 
+Listens to and lets you remove toasts.
+
 ## Arguments
 
 Takes one optional argument, which is a options object:

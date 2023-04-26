@@ -42,7 +42,7 @@ const App = () => {
 ### Using `ToastProvider`
 
 ```tsx
-import { ToastProvider, Toast } "./toast";
+import { ToastProvider } "./toast";
 
 export const App = () => {
   return (
