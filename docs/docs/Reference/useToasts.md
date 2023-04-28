@@ -19,3 +19,5 @@ Takes one optional argument, which is a options object:
 
 - **`toasts`**: `Array<T & { id: string }>` The list of current toasts
 - **`onRemoveToast`**: `(toastId: string) => void` The list of current toasts
+- **`cancelToastTimeout`**: `(toastId: string) => void` Cancels whatever timeout the given toast has for removing itself.
+- **`restartToastTimeout`**: `(toastId: string, removeAfterMs?: number) => void` Restarts whatever timeout the given toast has for removing itself.
