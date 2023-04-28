@@ -203,6 +203,80 @@ describe("useToasts", () => {
       expect(screen.getByText("Foobar")).toBeInTheDocument()
     );
   });
+
+  it("is possible to cancel and restart a toast timeout", async () => {
+    const user = userEvent.setup();
+    const { useToasts, toast } = initToast<{ title: string }>();
+    const Toasts = () => {
+      const {
+        toasts,
+        onRemoveToast,
+        cancelToastTimeout,
+        restartToastTimeout,
+      } = useToasts();
+      return (
+        <ul>
+          {toasts.map((toast) => (
+            <li key={toast.id}>
+              {toast.title}{" "}
+              <button
+                onClick={() => cancelToastTimeout(toast.id)}
+              >
+                Cancel
+              </button>{" "}
+              <button
+                onClick={() => restartToastTimeout(toast.id)}
+              >
+                Restart
+              </button>
+            </li>
+          ))}
+        </ul>
+      );
+    };
+    let i = 0;
+    const App = () => {
+      return (
+        <>
+          <Toasts />
+          <button
+            onClick={() => {
+              i += 1;
+              toast({ title: `Toast ${i}`, removeAfterMs: 200 });
+            }}
+          >
+            Toast
+          </button>
+        </>
+      );
+    };
+    render(<App />);
+    expect(screen.getByRole("list")).toBeEmptyDOMElement();
+    await user.click(
+      screen.getByRole("button", { name: "Toast" })
+    );
+    await waitFor(() =>
+      expect(
+        screen.getByRole("button", { name: "Cancel" })
+      ).toBeInTheDocument()
+    );
+    await user.click(
+      screen.getByRole("button", { name: "Cancel" })
+    );
+    await waitFor(
+      () => new Promise((resolve) => setTimeout(resolve, 300))
+    );
+    expect(
+      screen.getByRole("button", { name: "Restart" })
+    ).toBeInTheDocument();
+    await user.click(
+      screen.getByRole("button", { name: "Restart" })
+    );
+    await waitFor(
+      () => new Promise((resolve) => setTimeout(resolve, 300))
+    );
+    expect(screen.getByRole("list")).toBeEmptyDOMElement();
+  });
 });
 
 describe("initToast", () => {
