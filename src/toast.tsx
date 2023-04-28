@@ -11,14 +11,16 @@ export const ToastEventType = "ryfrea-toast" as const;
 type UnsubscribeFunction = () => void;
 
 export const subscribeToToasts = <T extends Record<string, any>>(
-  onToastAdded: (toast: T & { removeAfterMs?: number }) => void,
+  onToastAdded: (
+    toast: T & { removeAfterMs?: number; id: string }
+  ) => void,
   channel: string
 ): UnsubscribeFunction => {
   const listener = (e: Event) => {
     const event = e as Event & {
-      detail?: T & { removeAfterMs?: number };
+      detail?: T & { removeAfterMs?: number; id: string };
     };
-    if (event.detail) {
+    if (event.detail && event.detail.id) {
       onToastAdded(event.detail);
     }
   };
@@ -34,9 +36,11 @@ export const initToast = <T extends Record<string, any>>() => {
 
   return {
     toast: (args: T & { removeAfterMs?: number }) => {
+      const id = genId();
       document.dispatchEvent(
-        new CustomEvent(channel, { detail: args })
+        new CustomEvent(channel, { detail: { ...args, id } })
       );
+      return id;
     },
     ToastProvider: (props: ToastProviderProps<T>) => (
       <ToastProvider {...props} channel={channel} />

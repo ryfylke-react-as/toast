@@ -1,6 +1,11 @@
 import "@testing-library/dom";
 import "@testing-library/jest-dom";
-import { render, screen, waitFor } from "@testing-library/react";
+import {
+  act,
+  render,
+  screen,
+  waitFor,
+} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import React, { useEffect } from "react";
 import { describe, expect, it } from "vitest";
@@ -220,12 +225,16 @@ describe("useToasts", () => {
             <li key={toast.id}>
               {toast.title}{" "}
               <button
-                onClick={() => cancelToastTimeout(toast.id)}
+                onClick={() =>
+                  act(() => cancelToastTimeout(toast.id))
+                }
               >
                 Cancel
               </button>{" "}
               <button
-                onClick={() => restartToastTimeout(toast.id)}
+                onClick={() =>
+                  act(() => restartToastTimeout(toast.id))
+                }
               >
                 Restart
               </button>
@@ -242,7 +251,12 @@ describe("useToasts", () => {
           <button
             onClick={() => {
               i += 1;
-              toast({ title: `Toast ${i}`, removeAfterMs: 200 });
+              act(() =>
+                toast({
+                  title: `Toast ${i}`,
+                  removeAfterMs: 200,
+                })
+              );
             }}
           >
             Toast
@@ -276,6 +290,72 @@ describe("useToasts", () => {
       () => new Promise((resolve) => setTimeout(resolve, 300))
     );
     expect(screen.getByRole("list")).toBeEmptyDOMElement();
+  });
+
+  it("is possible for separate providers to stay in sync", async () => {
+    const user = userEvent.setup();
+    const { useToasts, toast, ToastProvider } = initToast<{
+      title: string;
+    }>();
+    const Toasts = () => {
+      const { toasts, onRemoveToast } = useToasts();
+      return (
+        <ul>
+          {toasts.map((toast) => (
+            <li key={toast.id} data-testid="provider-1-toast">
+              {toast.title}{" "}
+              <button
+                onClick={() =>
+                  act(() => onRemoveToast(toast.id))
+                }
+              >
+                Remove me
+              </button>
+            </li>
+          ))}
+        </ul>
+      );
+    };
+    const App = () => {
+      return (
+        <>
+          <Toasts />
+          <ToastProvider
+            renderToasts={(props) => (
+              <ul>
+                {props.toasts.map((toast) => (
+                  <li
+                    data-testid="provider-2-toast"
+                    key={toast.id}
+                  >
+                    {toast.title}
+                  </li>
+                ))}
+              </ul>
+            )}
+          />
+          <button
+            onClick={() =>
+              act(() => toast({ title: "toast content" }))
+            }
+          >
+            Toast
+          </button>
+        </>
+      );
+    };
+    render(<App />);
+    expect(screen.getAllByRole("list").length).toBe(2);
+    await user.click(screen.getByRole("button"));
+    await waitFor(() =>
+      expect(screen.getAllByRole("listitem").length).toBe(2)
+    );
+    await user.click(
+      screen.getByRole("button", { name: "Remove me" })
+    );
+    await waitFor(() =>
+      expect(screen.queryByRole("listitem")).toBeNull()
+    );
   });
 });
 
