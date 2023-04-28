@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from "react";
 import { ToastEventType, subscribeToToasts } from "./toast";
-import { genId } from "./utils";
 
 export type UseToastsOpts<T> = {
   onToastAdded?: (toast: T & { id: string }) => void;
@@ -10,6 +9,9 @@ export type UseToastsOpts<T> = {
 export type UseToastsOptsInternal<T> = UseToastsOpts<T> & {
   channel: string;
 };
+
+const getRemoveChannel = (channel: string) =>
+  `${channel}-remove`;
 
 /** Listens to all toasts and stores them in a list */
 export function useToasts<T extends Record<string, any>>(
@@ -22,35 +24,48 @@ export function useToasts<T extends Record<string, any>>(
   const [toasts, setToasts] = useState<
     (T & { id: string; removeAfterMs?: number })[]
   >([]);
+
+  useListenToRemoveToast({
+    onRemove: (id) => {
+      if (mounted.current) {
+        setToasts((prev) => {
+          if (!prev.find((item) => item.id === id)) {
+            return prev; // keep old reference to prevent re-render
+          }
+          return prev.filter((item) => item.id !== id);
+        });
+      }
+    },
+    channel: opts.channel,
+  });
+
+  const removeToast = (id: string) => {
+    if (mounted.current) {
+      setToasts((prev) => prev.filter((item) => item.id !== id));
+    }
+    document.dispatchEvent(
+      new CustomEvent(getRemoveChannel(opts.channel), {
+        detail: id,
+      })
+    );
+  };
+
   useEffect(() => {
     mounted.current = true;
     const unsubscribe = subscribeToToasts<T>((toast) => {
-      const toastId = genId();
       setToasts((prev) => {
         if (toast) {
-          const newToast = { ...toast, id: toastId };
+          const newToast = { ...toast };
           opts.onToastAdded?.(newToast);
-          return [...prev, { ...toast, id: toastId }];
+          return [...prev, { ...toast }];
         } else {
           return prev;
         }
       });
-      if (toast.removeAfterMs) {
-        timeouts.current[toastId] = setTimeout(() => {
-          if (mounted.current) {
-            setToasts((prev) =>
-              prev.filter((item) => item.id !== toastId)
-            );
-          }
-        }, toast.removeAfterMs);
-      } else if (opts.removeToastsAfterMs) {
-        timeouts.current[toastId] = setTimeout(() => {
-          if (mounted.current) {
-            setToasts((prev) =>
-              prev.filter((item) => item.id !== toastId)
-            );
-          }
-        }, opts.removeToastsAfterMs);
+      if (toast.removeAfterMs || opts.removeToastsAfterMs) {
+        timeouts.current[toast.id] = setTimeout(() => {
+          removeToast(toast.id);
+        }, toast.removeAfterMs ?? opts.removeToastsAfterMs);
       }
     }, opts.channel);
 
@@ -63,9 +78,7 @@ export function useToasts<T extends Record<string, any>>(
 
   return {
     toasts,
-    onRemoveToast: (id: string) => {
-      setToasts((prev) => prev.filter((item) => item.id !== id));
-    },
+    onRemoveToast: removeToast,
     cancelToastTimeout: (id: string) => {
       if (timeouts.current[id]) {
         clearTimeout(timeouts.current[id]);
@@ -83,12 +96,28 @@ export function useToasts<T extends Record<string, any>>(
         clearTimeout(timeouts.current[id]);
       }
       timeouts.current[id] = setTimeout(() => {
-        if (mounted.current) {
-          setToasts((prev) =>
-            prev.filter((item) => item.id !== id)
-          );
-        }
+        removeToast(id);
       }, removeAfterMs ?? toast.removeAfterMs ?? opts.removeToastsAfterMs);
     },
   };
+}
+
+function useListenToRemoveToast(opts: {
+  onRemove: (toastId: string) => void;
+  channel: string;
+}) {
+  const removeChannel = getRemoveChannel(opts.channel);
+  useEffect(() => {
+    const listener = (e: Event) => {
+      const event = e as Event & {
+        detail?: string;
+      };
+      if (event.detail) {
+        opts.onRemove(event.detail);
+      }
+    };
+    document.addEventListener(removeChannel, listener);
+    return () =>
+      document.removeEventListener(removeChannel, listener);
+  }, [opts.channel]);
 }
