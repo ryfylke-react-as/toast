@@ -11,6 +11,11 @@ export type ToastProviderProps<T> = {
   renderToasts: (props: {
     toasts: (T & { id: string })[];
     onRemoveToast: (id: string) => void;
+    cancelToastTimeout: (id: string) => void;
+    restartToastTimeout: (
+      id: string,
+      removeAfterMs?: number
+    ) => void;
   }) => ReactElement;
   removeToastsAfterMs?: number;
   onToastAdded?: (toast: T) => void;
@@ -25,7 +30,12 @@ export type ToastProviderPropsInternal<T> =
 export function ToastProvider<T extends Record<string, any>>(
   props: ToastProviderPropsInternal<T>
 ) {
-  const { toasts, onRemoveToast } = useToasts({
+  const {
+    toasts,
+    onRemoveToast,
+    cancelToastTimeout,
+    restartToastTimeout,
+  } = useToasts({
     removeToastsAfterMs: props.removeToastsAfterMs,
     onToastAdded: props.onToastAdded,
     channel: props.channel,
@@ -36,6 +46,8 @@ export function ToastProvider<T extends Record<string, any>>(
       <props.renderToasts
         toasts={toasts}
         onRemoveToast={onRemoveToast}
+        cancelToastTimeout={cancelToastTimeout}
+        restartToastTimeout={restartToastTimeout}
       />,
       props.portal
     );
@@ -45,6 +57,8 @@ export function ToastProvider<T extends Record<string, any>>(
     <props.renderToasts
       toasts={toasts}
       onRemoveToast={onRemoveToast}
+      cancelToastTimeout={cancelToastTimeout}
+      restartToastTimeout={restartToastTimeout}
     />
   );
 }

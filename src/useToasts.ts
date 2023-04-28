@@ -15,10 +15,13 @@ export type UseToastsOptsInternal<T> = UseToastsOpts<T> & {
 export function useToasts<T extends Record<string, any>>(
   opts: UseToastsOptsInternal<T> = { channel: ToastEventType }
 ) {
+  const timeouts = useRef<
+    Record<string, ReturnType<typeof setTimeout>>
+  >({});
   const mounted = useRef(true);
-  const [toasts, setToasts] = useState<(T & { id: string })[]>(
-    []
-  );
+  const [toasts, setToasts] = useState<
+    (T & { id: string; removeAfterMs?: number })[]
+  >([]);
   useEffect(() => {
     mounted.current = true;
     const unsubscribe = subscribeToToasts<T>((toast) => {
@@ -33,7 +36,7 @@ export function useToasts<T extends Record<string, any>>(
         }
       });
       if (toast.removeAfterMs) {
-        setTimeout(() => {
+        timeouts.current[toastId] = setTimeout(() => {
           if (mounted.current) {
             setToasts((prev) =>
               prev.filter((item) => item.id !== toastId)
@@ -41,7 +44,7 @@ export function useToasts<T extends Record<string, any>>(
           }
         }, toast.removeAfterMs);
       } else if (opts.removeToastsAfterMs) {
-        setTimeout(() => {
+        timeouts.current[toastId] = setTimeout(() => {
           if (mounted.current) {
             setToasts((prev) =>
               prev.filter((item) => item.id !== toastId)
@@ -62,6 +65,30 @@ export function useToasts<T extends Record<string, any>>(
     toasts,
     onRemoveToast: (id: string) => {
       setToasts((prev) => prev.filter((item) => item.id !== id));
+    },
+    cancelToastTimeout: (id: string) => {
+      if (timeouts.current[id]) {
+        clearTimeout(timeouts.current[id]);
+      }
+    },
+    restartToastTimeout: (
+      id: string,
+      removeAfterMs?: number
+    ) => {
+      const toast = toasts.find((t) => t.id === id);
+      if (!toast) {
+        return;
+      }
+      if (timeouts.current[id]) {
+        clearTimeout(timeouts.current[id]);
+      }
+      timeouts.current[id] = setTimeout(() => {
+        if (mounted.current) {
+          setToasts((prev) =>
+            prev.filter((item) => item.id !== id)
+          );
+        }
+      }, removeAfterMs ?? toast.removeAfterMs ?? opts.removeToastsAfterMs);
     },
   };
 }
