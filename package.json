@@ -1,6 +1,6 @@
 {
   "name": "@ryfylke-react/toast",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "A simple solution for building your own toast management system.",
   "main": "./dist/cjs/index.js",
   "module": "./dist/esm/index.js",
