@@ -5,7 +5,9 @@ sidebar_position: 1
 
 # Ryfylke React Toast
 
-> A lightweight & headless toast solution for your React projects
+> Enables you to design your own toast-system
+
+🪶 **Lightweight** 🍞 **Headless** ⏱️ **Quick to setup** 🛠️ **Easily Configurable**
 
 ## Install
 
