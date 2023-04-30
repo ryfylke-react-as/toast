@@ -123,6 +123,10 @@ const config = {
                 label: "RTK Query Loader",
                 href: "https://rtk-query-loader.ryfylke.dev",
               },
+              {
+                label: "More",
+                href: "https://open-source.ryfylke.dev",
+              },
             ],
           },
         ],

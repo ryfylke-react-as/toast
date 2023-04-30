@@ -4,6 +4,7 @@
   "description": "A simple solution for building your own toast management system.",
   "main": "./dist/cjs/index.js",
   "module": "./dist/esm/index.js",
+  "homepage": "https://toast.ryfylke.dev/",
   "types": "./dist/esm/index.d.ts",
   "scripts": {
     "build": "yarn build:esm && yarn build:cjs",
