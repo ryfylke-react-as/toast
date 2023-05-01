@@ -62,3 +62,21 @@ export const toast = (toast: Toast) => {
   });
 };
 ```
+
+## Permanent logging
+
+You can use `onToastAdded` to log the toasts on your server whenever they are fired.
+
+```tsx title="components/ToastList.tsx"
+const ToastList = () => {
+  const toastUtils = useToasts({
+    onToastAdded: (toast) => {
+      // Log toast to server
+    },
+  });
+
+  return (...)
+};
+```
+
+If you cannot ensure that the toast-list is mounted whenever a toast is added, then you could [create a wrapper](.#configure-sensible-fallbacks) for the toast function itself.

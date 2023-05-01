@@ -4,14 +4,24 @@ sidebar_position: 2
 
 # 2. Create toast-list
 
-You can do this by using `ToastProvider` or using `useToasts`.
+With our utilities exported from `lib/toast.ts`, we can now start building a toast-list.
 
-### Using `useToasts`
+:::info
+The utils exported stay in sync through a unique channel created when `initToast` is called.
 
-```tsx
-import { useToasts } "./toast";
+This means that when you add a toast using the `toast` function, or remove it using `onRemoveToast`, this will affect every toast-list created from the same `initToast`.
 
-export const Toasts = () => {
+You can also initialize more than once to build separate independent lists.
+:::
+
+## Using `useToasts`
+
+See the [reference](../Reference/useToasts) for all exports and options.
+
+```tsx title="components/ToastList.tsx"
+import { useToasts } "../lib/toast";
+
+export const ToastList = () => {
     const { toasts, onRemoveToast} = useToasts();
 
     return (
@@ -27,42 +37,23 @@ export const Toasts = () => {
         </div>
     );
 }
-
-const App = () => {
-    return (
-        <div>
-            <Toasts />
-            {/* ...rest */}
-        </div>
-    )
-}
-
 ```
 
-### Using `ToastProvider`
+```tsx title="components/App.tsx"
+import { ToastList } from "./ToastList";
 
-```tsx
-import { ToastProvider } "./toast";
-
-export const App = () => {
+const App = () => {
   return (
-    <div>
-        <ToastProvider
-            renderToasts={(props) => (
-                <div className="toasts-container">
-                    {props.toasts.map((toast) => (
-                        <div key={toast.id} className="toast">
-                            {toast.title}
-                            <button onClick={() => props.onRemoveToast(toast.id)}>
-                                X
-                            </button>
-                        </div>
-                    ))}
-                </div>
-            )}
-        />
-        {/* ...rest */}
-    </div>
+    <>
+      <ToastList />
+      {/* ...rest */}
+    </>
   );
 };
 ```
+
+You can also take a look at more [examples](../Examples) using `useToasts`, for features like
+
+- Permanent logging of toasts
+- Pausing auto-dismissal on hover
+- Falling back to default values in the `toast` function.

@@ -87,11 +87,11 @@ const config = {
               },
               {
                 label: "Guide",
-                to: "/Guide/initialize",
+                to: "/Guide",
               },
               {
                 label: "Reference",
-                to: "/Reference/initToast",
+                to: "/Reference",
               },
               {
                 label: "Under the hood",
