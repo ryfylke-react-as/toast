@@ -8,6 +8,10 @@ sidebar_position: 4
 
 A component for rendering the toast-list.
 
+:::caution
+`ToastProvider` is an _alternative_ to `useToasts`, not a supplement.
+:::
+
 ## Props
 
 - **`renderToasts`**: Takes a component with the following props:

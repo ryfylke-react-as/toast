@@ -80,3 +80,22 @@ const ToastList = () => {
 ```
 
 If you cannot ensure that the toast-list is mounted whenever a toast is added, then you could [create a wrapper](.#configure-sensible-fallbacks) for the toast function itself.
+
+## Use outside of React
+
+Although not as useful, you can use this library outside of React.
+
+```typescript
+const { subscribeToToasts } = initToast<ToastInterface>();
+
+const unsubscribe = subscribeToToasts((toast) => {
+  // Do something when toast is recieved.
+  logToServer(toast);
+  renderToastList({ newToast: toast });
+});
+
+// Then if you want to stop listening for toasts at some point
+unsubscribe();
+```
+
+You could use this to integrate with other frontend frameworks, or even vanilla javascript.
