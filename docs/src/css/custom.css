@@ -21,3 +21,15 @@
   --ifm-color-primary-lightest: #ad713c;
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
 }
+
+.navbar {
+  background: linear-gradient(350deg, #e8e8f2, #feede2);
+}
+
+[data-theme="dark"] .navbar {
+  background: linear-gradient(350deg, #1b1b1d, #2e2926);
+}
+
+.alert--success {
+  --ifm-alert-background-color: #282a36;
+}
